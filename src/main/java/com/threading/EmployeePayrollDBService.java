@@ -26,11 +26,11 @@ public class EmployeePayrollDBService {
         String password = "root";
         Connection connection = null;
         // the DriverManager class will attempt to load available JDBC drivers
-        try {
-            connection = DriverManager.getConnection(jdbcURL, userName, password);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        log.info("Processing Thread : " + Thread.currentThread().getName() + "Connecting to database : " + jdbcURL);
+        connection = DriverManager.getConnection(jdbcURL, userName, password);
+        //which thread is actually going to execute my connection
+        log.info("Processing Thread : " + Thread.currentThread().getName() + " ID : " + connectionCounter
+                + " Connection is successful! " + connection);
         return connection;
     }
 
@@ -47,7 +47,7 @@ public class EmployeePayrollDBService {
                 String name = resultSet.getString("name");
                 String gender = resultSet.getString("Gender");
                 double salary = resultSet.getDouble("salary");
-                LocalDate startDate = resultSet.getDate("start").toLocalDate();
+                LocalDate startDate = resultSet.getDate("startDate").toLocalDate();
                 employeePayrollList.add(new EmployeePayrollData(emp_id, name, gender, salary, startDate));
             }
         } catch (Exception e) {
@@ -79,4 +79,3 @@ public class EmployeePayrollDBService {
         return employeePayrollData;
     }
 }
-
