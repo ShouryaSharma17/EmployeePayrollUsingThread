@@ -9,9 +9,12 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class EmployeePayrollDBService {
     private static EmployeePayrollDBService employeePayrollDBService;
+    private static Logger log = Logger.getLogger(EmployeePayrollDBService.class.getName());
+    private int connectionCounter = 0;
 
     // creating the object of Signature and getting instance
     public static EmployeePayrollDBService getInstance() {
@@ -20,8 +23,10 @@ public class EmployeePayrollDBService {
         }
         return employeePayrollDBService;
     }
-    public static Connection getConnection() {
-        String jdbcURL = "jdbc:mysql://localhost:3306/employeepayroll_service?useSSL=false";
+
+    public synchronized Connection getConnection() throws SQLException {
+        connectionCounter++;
+        String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service";
         String userName = "root";
         String password = "root";
         Connection connection = null;
@@ -47,7 +52,7 @@ public class EmployeePayrollDBService {
                 String name = resultSet.getString("name");
                 String gender = resultSet.getString("Gender");
                 double salary = resultSet.getDouble("salary");
-                LocalDate startDate = resultSet.getDate("startDate").toLocalDate();
+                LocalDate startDate = resultSet.getDate("start").toLocalDate();
                 employeePayrollList.add(new EmployeePayrollData(emp_id, name, gender, salary, startDate));
             }
         } catch (Exception e) {
